@@ -1,0 +1,16 @@
+{
+  "name": "flash-history",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "An in-memory JSON revision API with undo and redo.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "demo": "node examples/demo.mjs"
+  },
+  "license": "MIT"
+}
