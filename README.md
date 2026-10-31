@@ -1,8 +1,18 @@
 # Flash History
 
-An API for keeping revisions of JSON documents and moving backward or forward through them. Useful for experimenting with editor undo/redo or configuration changes.
+Keep versions of a JSON document and move through them with undo and redo. Each write checks the current version so one client does not overwrite another client's changes.
 
 Default address: **http://127.0.0.1:4311**.
+
+## Getting started
+
+Requires Node.js 22 or later. No packages need to be installed.
+
+```sh
+npm start
+```
+
+Keep that terminal open while using the API. In a second terminal, run `npm run demo` to try it or `npm test` to run the tests. Press Ctrl+C in the first terminal to stop the server.
 
 ## Endpoints
 
@@ -25,17 +35,7 @@ Data lives **only in memory** and is lost when the process stops. The defaults a
 
 Six service tests cover undo/redo, branches, simultaneous writers, retention, capacity, and malformed requests. Seven transport tests cover the HTTP boundary.
 
-## Run locally
-
-Requires Node.js 22 or later. There are no third-party dependencies or install steps.
-
-```sh
-npm start
-```
-
-In another terminal, run `npm run demo` for an actual HTTP example or `npm test` for the automated checks. Each project runs on its own port. Stop the server with Ctrl+C.
-
-## Access and request format
+## Access and requests
 
 By default, the server listens on `127.0.0.1`. Set `PORT` and `HOST` to change the listener. Setting `API_TOKEN` enables Bearer authentication for all API routes; `GET /health` stays public. A token must be 32–256 characters. Non-loopback binding requires a token. For example, in PowerShell:
 
@@ -46,10 +46,14 @@ npm start
 
 Send `Authorization: Bearer <your-token>` when authentication is enabled. The demo reads the same `API_TOKEN` environment variable; its optional `API_URL` changes the target server. The server does not read a .env file automatically. For access beyond your own computer, use a trusted HTTPS reverse proxy and restrict access. There is no built-in TLS, per-user authorization, CORS support, or managed hosting in this repository.
 
-Requests with bodies must use `Content-Type: application/json`. Keys/IDs are 1–64 ASCII letters, numbers, underscores or hyphens and must start with a letter or number. No query parameters are supported. Responses are JSON except successful deletion (204). Error responses use `{"error":{"code":"...","message":"..."}}`.
+Requests with bodies must use `Content-Type: application/json`. Keys/IDs are 1–64 ASCII letters, numbers, underscores or hyphens and must start with a letter or number. No query parameters are supported. Responses are JSON. Error responses use `{"error":{"code":"...","message":"..."}}`.
 
 Bodies are limited to 64 KiB, 32 nesting levels and 10,000 values. Numbers must be finite. Unsupported methods return 405, bad JSON 400, unsupported content types 415, oversized bodies 413, and missing/incorrect credentials 401. Responses use `Cache-Control: no-store`. Health reports process availability, not downstream readiness. No endpoint executes submitted code or fetches URLs from submitted data.
 
-## Development notes
+## Tests
 
-Tests make real requests to local HTTP servers on temporary ports. GitHub Actions runs them on Node 22 and 24. This is a single-process reference service, not a hosted production offering. Tests cover known cases; they are not a promise that no bugs remain. MIT licensed.
+Tests send HTTP requests to local servers on temporary ports. GitHub Actions runs them on Node 22 and 24.
+
+This repository contains a small service you host yourself. It runs as one process.
+
+MIT licensed. See [LICENSE](LICENSE).
