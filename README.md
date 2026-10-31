@@ -1,10 +1,10 @@
 # Flash History
 
-Keep versions of a JSON document and move through them with undo and redo. Each write checks the current version so one client does not overwrite another client's changes.
+An HTTP API for undo and redo on JSON documents. Each edit includes a version number to catch conflicting writes. History is kept in memory and disappears when the server stops.
 
 Default address: **http://127.0.0.1:4311**.
 
-## Getting started
+## Setup
 
 Requires Node.js 22 or later. No packages need to be installed.
 
@@ -12,7 +12,14 @@ Requires Node.js 22 or later. No packages need to be installed.
 npm start
 ```
 
-Keep that terminal open while using the API. In a second terminal, run `npm run demo` to try it or `npm test` to run the tests. Press Ctrl+C in the first terminal to stop the server.
+Leave the server running. Open another terminal in the same folder:
+
+```sh
+npm run demo
+npm test
+```
+
+The demo sends sample requests to the local server. Stop the server with Ctrl+C.
 
 ## Endpoints
 
@@ -48,12 +55,10 @@ Send `Authorization: Bearer <your-token>` when authentication is enabled. The de
 
 Requests with bodies must use `Content-Type: application/json`. Keys/IDs are 1–64 ASCII letters, numbers, underscores or hyphens and must start with a letter or number. No query parameters are supported. Responses are JSON. Error responses use `{"error":{"code":"...","message":"..."}}`.
 
-Bodies are limited to 64 KiB, 32 nesting levels and 10,000 values. Numbers must be finite. Unsupported methods return 405, bad JSON 400, unsupported content types 415, oversized bodies 413, and missing/incorrect credentials 401. Responses use `Cache-Control: no-store`. Health reports process availability, not downstream readiness. No endpoint executes submitted code or fetches URLs from submitted data.
+Bodies are limited to 64 KiB, 32 nesting levels and 10,000 values. Numbers must be finite. Unsupported methods return 405, bad JSON 400, unsupported content types 415, oversized bodies 413, and missing/incorrect credentials 401. Responses use `Cache-Control: no-store`. The health route only confirms that this process is running. Submitted data is not executed or used to fetch URLs.
 
 ## Tests
 
 Tests send HTTP requests to local servers on temporary ports. GitHub Actions runs them on Node 22 and 24.
-
-This repository contains a small service you host yourself. It runs as one process.
 
 MIT licensed. See [LICENSE](LICENSE).
